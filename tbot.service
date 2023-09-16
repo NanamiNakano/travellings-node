@@ -1,0 +1,12 @@
+[Unit]
+Description=Travellings Site Checker Daemon
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/travellings-node/
+ExecStart=node bot.js
+Restart=always
