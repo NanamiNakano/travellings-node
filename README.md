@@ -23,7 +23,7 @@ API 默认启动在 3000 端口，如有需要可以修改 `api.js` 中的 `cons
 API 有以下几个路径可以访问  
 ```
 /random  随机一个数据库中 status 为 RUN 的站点
-/all     查看数据库中所有的站点（使用 /all?normal=true 以 json 输出）
+/all     查看数据库中所有的站点（使用 /all?normal=true 以 json 输出，使用 /all?normaltotal=true 以 json 输出统计信息）
 /fetch   搜索站点（查询字符串中带有 &normal=true 以 json 输出）
          示例：http://127.0.0.1:3000/fetch?id=114  即搜索 indexs 为 114 的站点
               http://127.0.0.1:3000/fetch?name="BLxcwg666"  即搜索 name 为 BLxcwg666 的站点
@@ -44,7 +44,7 @@ fetch 得到的格式与 random 有所不同，您可以根据该 API 的请求�
 const axiosConfig = {
   timeout: 30000, // 超时时间默认 30 秒，有需要自己改
   headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.1; +https://www.travellings.cn/docs/qa)',
+    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.24; +https://www.travellings.cn/docs/qa)',
   },
 };
 ```
@@ -54,6 +54,9 @@ const axiosConfig = {
 // 每隔 5 小时一次循环，有需要自己改
 setInterval(crawlAndCheck, 5 * 60 * 60 * 1000);
 ```
+
+## 展望未来
+/add /edit /del，实现简单的鉴权
 
 ## 后记
 开发者不是什么大公司的高级后端开发人员，代码烂就烂，能跑都不错了，有意见有建议提 PR 或者 Issues  
