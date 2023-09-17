@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： localhost
--- 生成日期： 2023-09-16 01:20:06
+-- 生成日期： 2023-09-17 12:13:09
 -- 服务器版本： 8.0.12
 -- PHP 版本： 7.4.3
 
@@ -20,6 +20,27 @@ SET time_zone = "+00:00";
 --
 -- 数据库： `travellings`
 --
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `sessions`
+--
+
+CREATE TABLE `sessions` (
+  `id` int(11) NOT NULL,
+  `user` text NOT NULL,
+  `passwd` text NOT NULL,
+  `token` text NOT NULL,
+  `last` text NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- 转存表中的数据 `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `user`, `passwd`, `token`, `last`) VALUES
+(1, 'BLxcwg666', '114514', '104', '1970-1-1 0:00:00');
 
 -- --------------------------------------------------------
 
@@ -894,6 +915,12 @@ INSERT INTO `webs` (`indexs`, `status`, `name`, `link`, `tag`) VALUES
 --
 
 --
+-- 表的索引 `sessions`
+--
+ALTER TABLE `sessions`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- 表的索引 `webs`
 --
 ALTER TABLE `webs`
@@ -902,6 +929,12 @@ ALTER TABLE `webs`
 --
 -- 在导出的表使用AUTO_INCREMENT
 --
+
+--
+-- 使用表AUTO_INCREMENT `sessions`
+--
+ALTER TABLE `sessions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 使用表AUTO_INCREMENT `webs`
