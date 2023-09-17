@@ -6,8 +6,8 @@
 //                                       |___/   
 //                     
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.79 / 2023/9/17 10:51 Lastest
-// "你说得对，但是"
+// Version 1.80 / 2023/9/17 10:51 Lastest
+// "玩原神玩的"
 
 const express = require('express');
 const mysql = require('mysql2/promise');
@@ -17,7 +17,7 @@ const port = 3000;
 
 // Express Headers
 app.use((req, res, next) => {
-  res.setHeader('Server', 'Travellings API/1.79');
+  res.setHeader('Server', 'Travellings API/1.80');
   next();
 });
 
@@ -41,7 +41,7 @@ figlet('Travellings API', function (err, data) {
     }
     console.log(data)
     console.log("");
-    console.log("Travellings API <v 1.79> // Cpoyright (C) 2020-2023 Travellings-link Project.");
+    console.log("Travellings API <v 1.80> // Cpoyright (C) 2020-2023 Travellings-link Project.");
     console.log("");
     // 开机
     app.listen(port, () => {
@@ -215,8 +215,35 @@ app.get('/all', async (req, res) => {
   }
 });
 
+
+// 验证 token
+async function verifyToken(requestToken) {
+  try {
+    // 在数据库中查询用户提供的 token
+    const [rows] = await pool.query('SELECT COUNT(*) as count FROM sessions WHERE token = ?', [requestToken]);
+    return rows[0].count > 0;
+  } catch (error) {
+    console.error('Error:', error);
+    return false;
+  }
+}
+
 // 这是 Add，用于添加站点
 app.get('/add', async (req, res) => {
+  const requestToken = req.query.token; // 从请求中获取 token
+
+  // 鉴权
+  const isValidToken = await verifyToken(requestToken);
+
+  if (!isValidToken) {
+    if (requestToken) {
+      res.status(403).json({ error: 'Token 无效或已过期，请尝试重新登录' });
+    } else {
+      res.status(403).json({ error: 'Unauthorized' });
+    }
+    return;
+  }
+
   const name = req.query.name;
   const link = req.query.link;
   const tag = req.query.tag;
@@ -253,6 +280,20 @@ app.get('/add', async (req, res) => {
 
 // 这是 Edit，用于编辑站点
 app.get('/edit', async (req, res) => {
+  const requestToken = req.query.token; // 从请求中获取 token
+
+  // 鉴权
+  const isValidToken = await verifyToken(requestToken);
+
+  if (!isValidToken) {
+    if (requestToken) {
+      res.status(403).json({ error: 'Token 无效或已过期，请尝试重新登录' });
+    } else {
+      res.status(403).json({ error: 'Unauthorized' });
+    }
+    return;
+  }
+
   const id = req.query.id;
   let status = req.query.status;
   let name = req.query.name;
@@ -320,6 +361,20 @@ app.get('/edit', async (req, res) => {
 
 // 这是 Del，用于删除站点
 app.get('/del', async (req, res) => {
+  const requestToken = req.query.token; // 从请求中获取 token
+
+  // 鉴权
+  const isValidToken = await verifyToken(requestToken);
+
+  if (!isValidToken) {
+    if (requestToken) {
+      res.status(403).json({ error: 'Token 无效或已过期，请尝试重新登录' });
+    } else {
+      res.status(403).json({ error: 'Unauthorized' });
+    }
+    return;
+  }
+
   const id = req.query.id;
 
   try {
@@ -343,5 +398,7 @@ app.get('/del', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
   }
 });
+
+
 
 // 要加新东西在这加
