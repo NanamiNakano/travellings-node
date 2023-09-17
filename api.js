@@ -6,8 +6,8 @@
 //                                       |___/   
 //                     
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.75 / 2023/9/16 16:50 Lastest
-// "早知道不学 Node.JS"
+// Version 1.79 / 2023/9/17 10:51 Lastest
+// "你说得对，但是"
 
 const express = require('express');
 const mysql = require('mysql2/promise');
@@ -17,7 +17,7 @@ const port = 3000;
 
 // Express Headers
 app.use((req, res, next) => {
-  res.setHeader('Server', 'Travellings API/1.75');
+  res.setHeader('Server', 'Travellings API/1.79');
   next();
 });
 
@@ -160,8 +160,11 @@ app.get('/fetch', async (req, res) => {
 // 这是 All，用于查询所有站点
 app.get('/all', async (req, res) => {
   const normal = req.query.normal === 'true'; // 如果请求需要，则使用 json 
+  const normalTotal = req.query.normaltotal === 'true'; // 如果请求需要，则使用 json 输出统计
 
   try {
+    const startTime = new Date(); // 开始计时
+
     const query = 'SELECT * FROM webs';
     const [rows] = await pool.query(query);
 
@@ -175,7 +178,7 @@ app.get('/all', async (req, res) => {
       if (normal) {
         res.json(rows);
       } else {
-        // 输出美观的表格
+        // 画表
         let html = '<style>table {width: 100%;} hr {border: 1px solid #ccc; margin-top: 20px;} .info {text-align: center; margin-top: 10px;}</style>';
         html += '<table border="1"><tr><th>站点ID</th><th>站点状态</th><th>站点名称</th><th>站点链接</th><th>站点标签</th></tr>';
         rows.forEach(site => {
@@ -183,8 +186,27 @@ app.get('/all', async (req, res) => {
         });
         html += '</table>';
         html += '<hr>';
-        html += `<div class="info">共 ${rows.length} 项</div>`;
-        res.send(html);
+        
+        const endTime = new Date(); // 结束计时
+        const queryTime = endTime - startTime;
+
+        if (normalTotal) {
+          // restful 统计
+          const stats = {
+            total: rows.length,
+            run: rows.filter(site => site.status === 'RUN').length,
+            lost: rows.filter(site => site.status === 'LOST').length,
+            error: rows.filter(site => site.status === 'ERROR').length,
+            timeout: rows.filter(site => site.status === 'TIMEOUT').length,
+            query: queryTime + "ms",
+          };
+
+          res.json(stats);
+        } else {
+          // html
+          html += `<div class="info">共 ${rows.length} 项，${rows.filter(site => site.status === 'RUN').length} 个 RUN，${rows.filter(site => site.status === 'LOST').length} 个 LOST，${rows.filter(site => site.status === 'ERROR').length} 个 ERROR，${rows.filter(site => site.status === 'TIMEOUT').length} 个 TIMEOUT，耗时 ${queryTime} ms</div>`;
+          res.send(html);
+        }
       }
     }
   } catch (error) {
