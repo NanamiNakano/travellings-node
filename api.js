@@ -41,7 +41,7 @@ figlet('Travellings API', function (err, data) {
     }
     console.log(data)
     console.log("");
-    console.log("Travellings API <v 1.75> // Cpoyright (C) 2020-2023 Travellings-link Project.");
+    console.log("Travellings API <v 1.79> // Cpoyright (C) 2020-2023 Travellings-link Project.");
     console.log("");
     // 开机
     app.listen(port, () => {
