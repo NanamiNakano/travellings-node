@@ -38,7 +38,7 @@ fetch 得到的格式与 random 有所不同，您可以根据该 API 的请求�
 默认不占用端口，请修改 `bot.js` 中的数据库信息  
 开机即可使用，默认 5 小时开启一次新的检测循环，默认超时时间为 30s，如有需要请修改 `bot.js` 中的以下部分代码  
 
-以下为检测超时部分，默认 User-Agent 使用 `Mozilla/5.0 (compatible; Travellings Bot/1.1; +https://www.travellings.cn/docs/qa)`，如果有需要也可以在此修改
+以下为检测超时部分，默认 User-Agent 使用 `Mozilla/5.0 (compatible; Travellings Bot/1.24; +https://www.travellings.cn/docs/qa)`，如果有需要也可以在此修改
 ```
 // Axios
 const axiosConfig = {
