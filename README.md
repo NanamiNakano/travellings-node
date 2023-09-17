@@ -5,7 +5,7 @@
 ```
 MySQL ≥ 8.0.12  
 Node.JS ≥ 16  
-Windiws / Linux
+Windows / Linux
 ```
 ## 数据库
 `travellings.sql` 是从原 PgSQL 中本人 用 手 挨个 写进去的，本人并不反对 PgSQL，仅是我不会用  
