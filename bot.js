@@ -90,7 +90,7 @@ async function crawlAndCheck() {
         if (error.response) {
           // 4xx or 5xx
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', [error.response.status, row.indexs]);
-          statusReason = `">>" + ${error.response.status}`;
+          statusReason = `>> ${error.response.status}`;
         } else if (error.code === 'ECONNABORTED') {
           // 你超时了
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['TIMEOUT', row.indexs]);
