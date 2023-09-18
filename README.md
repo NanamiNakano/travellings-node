@@ -65,7 +65,7 @@ setInterval(crawlAndCheck, 5 * 60 * 60 * 1000);
 API 关键操作调用 Log  
 独立管理系统 申请 + 审核，前后端分离  
 Bot 检测完毕统计  
-Bot 回滚宽松检测
+Bot 回滚宽松检测  
 Bot 支持http2并发送所有浏览器标头来尽可能避免拦截
 
 ## 后记
