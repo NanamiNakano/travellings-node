@@ -51,7 +51,7 @@ const dbConfig = {
 const axiosConfig = {
   timeout: 30000, // 超时时间默认 30 秒，有需要自己改
   headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.24; +https://www.travellings.cn/docs/qa)',
+    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.25; +https://www.travellings.cn/docs/qa)',
   },
 };
 
