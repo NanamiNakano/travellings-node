@@ -6,8 +6,8 @@
 //                                       |___/                       
 //
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.24 / 2023/9/16 17:44 Lastest
-// "你说他出 Bug 了吗，到底出没出，出没出，如出"
+// Version 1.25 / 2023/9/18 23:35 Lastest
+// "阿巴阿巴阿巴"
 
 const fs = require('fs');
 const path = require('path');
@@ -26,16 +26,16 @@ figlet('Travellings Bot', function (err, data) {
     }
     console.log(data)
     console.log("");
-    console.log("Travellings Bot <v 1.24> // Cpoyright (C) 2020-2023 Travellings-link Project.");
+    console.log("Travellings Bot <v 1.25> // Cpoyright (C) 2020-2023 Travellings-link Project.");
     console.log("");
     console.log(">> 开始检测站点");
     console.log("");
 });
 
-// 创建 logs（如果没有）
-const logsFolderPath = path.join(__dirname, 'logs');
-if (!fs.existsSync(logsFolderPath)) {
-  fs.mkdirSync(logsFolderPath);
+// 创建 Botlogs（如果没有）
+const BotlogsFolderPath = path.join(__dirname, 'Botlogs');
+if (!fs.existsSync(BotlogsFolderPath)) {
+  fs.mkdirSync(BotlogsFolderPath);
 }
 
 // MySQL
@@ -67,8 +67,8 @@ async function crawlAndCheck() {
     
     // 写 log
     const logFileName = `${currentTimeForFileName}.log`;
-    const logFilePath = path.join(logsFolderPath, logFileName);
-    const logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
+    const logFilePath = path.join(BotlogsFolderPath, logFileName);
+    const Botlogstream = fs.createWriteStream(logFilePath, { flags: 'a' });
 
     for (const row of rows) {
       let statusReason = ''; // 存储判定原因
@@ -76,29 +76,29 @@ async function crawlAndCheck() {
         const response = await axios.get(row.link, axiosConfig);
 
         // 检查相应 html 体
-        if (response.data.includes('travellings')) {
+        if (response.data.includes('travellings.cn/go')) {
           // 有就有
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['RUN', row.indexs]);
-          statusReason = '包含所需字段，状态已更新为 RUN';
+          statusReason = '>> RUN';
         } else {
           // 没有就没有
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['LOST', row.indexs]);
-          statusReason = '不包含所需字段，状态已更新为 LOST';
+          statusReason = '>> LOST';
         }
       } catch (error) {
         // 不正常情况
         if (error.response) {
           // 4xx or 5xx
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', [error.response.status, row.indexs]);
-          statusReason = `请求返回 ${error.response.status} 状态码，状态已更新为 ${error.response.status}`;
+          statusReason = `">>" + ${error.response.status}`;
         } else if (error.code === 'ECONNABORTED') {
           // 你超时了
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['TIMEOUT', row.indexs]);
-          statusReason = '请求超时，状态已更新为 TIMEOUT';
+          statusReason = '>> TIMEOUT';
         } else {
           // 其他疑难杂症归为 ERROR
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['ERROR', row.indexs]);
-          statusReason = '请求出错，状态已更新为 ERROR';
+          statusReason = '>> ERROR';
         }
       }
 
@@ -106,13 +106,13 @@ async function crawlAndCheck() {
       const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
       
       // log
-      const logEntry = `[${currentTime}] 站点 ${row.link} 检测完成，${statusReason}`;
+      const logEntry = `[${currentTime}] 站点 ${row.link} 检测完成 ${statusReason}`;
       console.log(logEntry);
-      logStream.write(`${logEntry}\n`);
+      Botlogstream.write(`${logEntry}\n`);
     }
 
     // 关了log
-    logStream.end();
+    Botlogstream.end();
   } catch (err) {
     console.error('Error:', err);
   } finally {
