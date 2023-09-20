@@ -67,7 +67,8 @@ API 关键操作调用 Log
 Bot 检测完毕统计  
 Bot 回滚宽松检测  
 Bot 支持http2并发送所有浏览器标头来尽可能避免拦截  
-API 整体 json 响应格式 Restful 化
+重写 API 响应格式  
+Bot 支持 socks5 和 http 代理  
 
 ## 后记
 开发者不是什么大公司的高级后端开发人员，代码烂就烂，能跑都不错了，有意见有建议提 PR 或者 Issues  
