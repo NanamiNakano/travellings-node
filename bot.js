@@ -167,4 +167,4 @@ async function crawlAndCheck() {
 crawlAndCheck();
 
 // 每隔 5 小时一次循环，有需要自己改
-setInterval(crawlAndCheck, 30000);
+setInterval(crawlAndCheck, 5 * 60 * 60 * 1000);
