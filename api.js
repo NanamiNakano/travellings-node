@@ -6,8 +6,8 @@
 //                                       |___/   
 //                     
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.82 / 2023/9/17 19:03 Lastest
-// "旅行的意义在于找到自己，而非浏览他人。"
+// Version 1.83 / 2023/9/17 20:16 Lastest
+// "实变函数学十遍，泛函学完心泛寒。"
 
 const express = require('express');
 const mysql = require('mysql2/promise');
@@ -20,7 +20,7 @@ const ipAddress = process.env.API_BIND_IP;
 
 // Express Headers
 app.use((req, res, next) => {
-  res.setHeader('Server', 'Travellings API/1.82');
+  res.setHeader('Server', 'Travellings API/1.83');
   res.setHeader('X-Powered-By', 'Travellings API');
   next();
 });
@@ -44,13 +44,12 @@ figlet('Travellings API', function (err, data) {
         return;
     }
     console.log(data)
-    console.log("\nTravellings API <v 1.82> // Cpoyright (C) 2020-2023 Travellings-link Project.");
+    console.log("\nTravellings API <v 1.83> // Cpoyright (C) 2020-2023 Travellings-link Project.");
     // 开机
     app.listen(port, () => {
     console.log(`\n>> Travellings API 已在 ${ipAddress} 上的 ${port} 端口运行`);
 });
 });
-
 
 // 这是 Random
 app.get('/random', async (req, res) => {
@@ -60,7 +59,7 @@ app.get('/random', async (req, res) => {
     
     // 没有就是没有
     if (rows.length === 0) {
-      res.status(404).json({ error: 'No Active Sites Found' });
+      res.status(404).json({ code:'404', msg: '当前没有可访问的站点' });
     } else {
       const site = rows[0];
       const result = {
@@ -73,7 +72,7 @@ app.get('/random', async (req, res) => {
     }
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ code: '500', msg: 'Internal Server Error' });
   }
 });
 
@@ -89,7 +88,7 @@ app.get('/fetch', async (req, res) => {
   // 除了 normal 只能带一个参数
   const queryParams = [id, status, name, link, tag].filter(param => param !== undefined && param !== 'true');
   if (queryParams.length !== 1) {
-    res.status(400).json({ error: 'Invalid Query' });
+    res.status(400).json({ code: '400', msg: '无效的查询' });
     return;
   }
 
@@ -133,7 +132,7 @@ app.get('/fetch', async (req, res) => {
 
     if (rows.length === 0) {
       if (normal) {
-        res.status(404).json({ error: 'No Matching Sites Found' });
+        res.status(404).json({ code: '404', msg: '未找到匹配的站点' });
       } else {
         res.status(404).send('<h3>未找到匹配的站点</h3>');
       }
@@ -155,7 +154,7 @@ app.get('/fetch', async (req, res) => {
     }
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ code:'500', msg: 'Internal Server Error' });
   }
 });
 
@@ -172,7 +171,7 @@ app.get('/all', async (req, res) => {
 
     if (rows.length === 0) {
       if (normal) {
-        res.status(404).json({ error: 'No Sites Found' });
+        res.status(404).json({ code: '404', msg: '没有找到站点' });
       } else {
         res.status(404).send('<h3>没有找到站点</h3>');
       }
@@ -195,6 +194,7 @@ app.get('/all', async (req, res) => {
         if (normalTotal) {
           // restful 统计
           const stats = {
+            code: 200,
             total: rows.length,
             run: rows.filter(site => site.status === 'RUN').length,
             lost: rows.filter(site => site.status === 'LOST').length,
@@ -213,7 +213,7 @@ app.get('/all', async (req, res) => {
     }
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ code:'500', msg: 'Internal Server Error' });
   }
 });
 
@@ -239,9 +239,9 @@ app.get('/add', async (req, res) => {
 
   if (!isValidToken) {
     if (requestToken) {
-      res.status(403).json({ error: 'Token 无效或已过期，请尝试重新登录' });
+      res.status(403).json({ code: '403', msg: 'Token 无效或已过期，请尝试重新登录' });
     } else {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(400).json({ code: '400', msg: 'Token 缺失' });
     }
     return;
   }
@@ -253,7 +253,7 @@ app.get('/add', async (req, res) => {
   try {
     // 必须的三个参数 name link tag
     if (!name || !link || !tag) {
-      res.status(400).json({ status: 'error', message: '参数缺失' });
+      res.status(400).json({ code: '400', msg: '参数缺失' });
       return;
     }
 
@@ -270,13 +270,13 @@ app.get('/add', async (req, res) => {
     if (result.affectedRows === 1) {
       // 顺便告诉你 id
       const insertedId = result.insertId;
-      res.status(201).json({ status: 'ok', id: insertedId, message: '成功添加站点' });
+      res.status(201).json({ code: '200', id: insertedId, msg: '成功添加站点' });
     } else {
-      res.status(500).json({ status: 'error', message: '添加站点失败' });
+      res.status(500).json({ code: '500', msg: '添加站点失败' });
     }
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    res.status(500).json({ code: '500', msg: 'Internal Server Error' });
   }
 });
 
@@ -289,9 +289,9 @@ app.get('/edit', async (req, res) => {
 
   if (!isValidToken) {
     if (requestToken) {
-      res.status(403).json({ error: 'Token 无效或已过期，请尝试重新登录' });
+      res.status(403).json({ code: '403', msg: 'Token 无效或已过期，请尝试重新登录' });
     } else {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(400).json({ code: '400', msg: 'Token 缺失' });
     }
     return;
   }
@@ -319,7 +319,7 @@ app.get('/edit', async (req, res) => {
   try {
     // 依赖 BUG 运行，别改，改了就炸
     if (!id || (!status && !name && !link && !tag)) {
-      res.status(400).json({ status: 'error', message: '参数缺失' });
+      res.status(400).json({ code: '400', msg: '参数缺失' });
       return;
     }
 
@@ -351,13 +351,13 @@ app.get('/edit', async (req, res) => {
     const [result] = await pool.execute(updateQuery, updateParams);
 
     if (result.affectedRows === 1) {
-      res.status(200).json({ status: 'ok', message: '成功更新站点信息' });
+      res.status(200).json({ code: '200', msg: '成功更新站点信息' });
     } else {
-      res.status(500).json({ status: 'error', message: '站点信息更新失败' });
+      res.status(500).json({ code:'500', msg: '站点信息更新失败' });
     }
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    res.status(500).json({ code: '500', msg: 'Internal Server Error' });
   }
 });
 
@@ -370,9 +370,9 @@ app.get('/del', async (req, res) => {
 
   if (!isValidToken) {
     if (requestToken) {
-      res.status(403).json({ error: 'Token 无效或已过期，请尝试重新登录' });
+      res.status(403).json({ code: '403', msg: 'Token 无效或已过期，请尝试重新登录' });
     } else {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(400).json({ code: '400', msg: 'Token 缺失' });
     }
     return;
   }
@@ -382,7 +382,7 @@ app.get('/del', async (req, res) => {
   try {
     // 必要参数 id
     if (!id) {
-      res.status(400).json({ status: 'error', message: '参数缺失' });
+      res.status(400).json({ code: '400', msg: '参数缺失' });
       return;
     }
 
@@ -391,16 +391,19 @@ app.get('/del', async (req, res) => {
     const [result] = await pool.execute(deleteQuery, [id]);
 
     if (result.affectedRows === 1) {
-      res.status(200).json({ status: 'ok', message: '成功删除站点' });
+      res.status(200).json({ code: '200', msg: '成功删除站点' });
     } else {
-      res.status(500).json({ status: 'error', message: '站点删除失败' });
+      res.status(500).json({ code: '500', msg: '站点删除失败' });
     }
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    res.status(500).json({ code: '500', msg: 'Internal Server Error' });
   }
 });
 
-
+// 404
+app.use((req, res, next) => {
+  res.status(404).json({ code:'404', msg: 'Not Found' });
+});
 
 // 要加新东西在这加
