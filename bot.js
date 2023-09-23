@@ -6,7 +6,7 @@
 //                                       |___/                       
 //
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.25 / 2023/9/18 23:35 Lastest
+// Version 1.26 / 2023/9/18 23:35 Lastest
 // "阿巴阿巴阿巴"
 
 const fs = require('fs');
@@ -14,6 +14,7 @@ const path = require('path');
 const axios = require('axios');
 const mysql = require('mysql2/promise');
 const moment = require('moment');
+const dotenv = require('dotenv');
 
 // ASCII艺术字
 var figlet = require('figlet');
@@ -26,7 +27,7 @@ figlet('Travellings Bot', function (err, data) {
     }
     console.log(data)
     console.log("");
-    console.log("Travellings Bot <v 1.25> // Cpoyright (C) 2020-2023 Travellings-link Project.");
+    console.log("Travellings Bot <v 1.26> // Cpoyright (C) 2020-2023 Travellings-link Project.");
     console.log("");
     console.log(">> 开始检测站点");
     console.log("");
@@ -39,19 +40,20 @@ if (!fs.existsSync(BotlogsFolderPath)) {
 }
 
 // MySQL
+dotenv.config();
 const dbConfig = {
-  host: '127.0.0.1',
-  port: '3306',
-  user: 'root',
-  password: 'nekodayo2333@',
-  database: 'travellings',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  port: process.env.DB_PORT,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 };
 
 // Axios
 const axiosConfig = {
   timeout: 30000, // 超时时间默认 30 秒，有需要自己改
   headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.25; +https://www.travellings.cn/docs/qa)',
+    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.26; +https://www.travellings.cn/docs/qa)',
   },
 };
 

@@ -6,28 +6,31 @@
 //                                       |___/   
 //                     
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.80 / 2023/9/17 10:51 Lastest
+// Version 1.81 / 2023/9/17 10:51 Lastest
 // "玩原神玩的"
 
 const express = require('express');
 const mysql = require('mysql2/promise');
+const dotenv = require('dotenv');
 
 const app = express();
 const port = 3000;
 
 // Express Headers
 app.use((req, res, next) => {
-  res.setHeader('Server', 'Travellings API/1.80');
+  res.setHeader('Server', 'Travellings API/1.81');
+  res.setHeader('X-Powered-By', 'Travellings API');
   next();
 });
 
 // MySQL
+dotenv.config();
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  port: '3306',
-  password: 'nekodayo2333@',
-  database: 'travellings',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  port: process.env.DB_PORT,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 });
 
 // ASCII艺术字
@@ -41,7 +44,7 @@ figlet('Travellings API', function (err, data) {
     }
     console.log(data)
     console.log("");
-    console.log("Travellings API <v 1.80> // Cpoyright (C) 2020-2023 Travellings-link Project.");
+    console.log("Travellings API <v 1.81> // Cpoyright (C) 2020-2023 Travellings-link Project.");
     console.log("");
     // 开机
     app.listen(port, () => {
