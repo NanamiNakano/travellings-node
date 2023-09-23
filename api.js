@@ -6,25 +6,26 @@
 //                                       |___/   
 //                     
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.81 / 2023/9/17 10:51 Lastest
-// "玩原神玩的"
+// Version 1.82 / 2023/9/17 19:03 Lastest
+// "旅行的意义在于找到自己，而非浏览他人。"
 
 const express = require('express');
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.API_PORT;
+const ipAddress = process.env.API_BIND_IP;
 
 // Express Headers
 app.use((req, res, next) => {
-  res.setHeader('Server', 'Travellings API/1.81');
+  res.setHeader('Server', 'Travellings API/1.82');
   res.setHeader('X-Powered-By', 'Travellings API');
   next();
 });
 
 // MySQL
-dotenv.config();
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -43,12 +44,10 @@ figlet('Travellings API', function (err, data) {
         return;
     }
     console.log(data)
-    console.log("");
-    console.log("Travellings API <v 1.81> // Cpoyright (C) 2020-2023 Travellings-link Project.");
-    console.log("");
+    console.log("\nTravellings API <v 1.82> // Cpoyright (C) 2020-2023 Travellings-link Project.");
     // 开机
     app.listen(port, () => {
-    console.log(`>> Travellings API 已在端口 ${port} 上运行`);
+    console.log(`\n>> Travellings API 已在 ${ipAddress} 上的 ${port} 端口运行`);
 });
 });
 

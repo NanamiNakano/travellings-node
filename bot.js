@@ -6,8 +6,8 @@
 //                                       |___/                       
 //
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.30 / 2023/9/23 17:01 Lastest
-// `阿巴阿巴阿巴`
+// Version 1.30 / 2023/9/23 18:24 Lastest
+// "炎炎夏季，暴雨连连，心如荒漠，人如飘絮，形如枯槁，骨如细柴。"
 
 const fs = require('fs');
 const path = require('path');
@@ -15,6 +15,7 @@ const axios = require('axios');
 const mysql = require('mysql2/promise');
 const moment = require('moment');
 const dotenv = require('dotenv');
+dotenv.config();
 
 // ASCII艺术字
 var figlet = require('figlet');
@@ -26,7 +27,6 @@ if (!fs.existsSync(BotlogsFolderPath)) {
 }
 
 // MySQL
-dotenv.config();
 const dbConfig = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
