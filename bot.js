@@ -6,7 +6,7 @@
 //                                       |___/                       
 //
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.28 / 2023/9/23 16:22 Lastest
+// Version 1.29 / 2023/9/23 16:53 Lastest
 // `阿巴阿巴阿巴`
 
 const fs = require('fs');
@@ -51,7 +51,7 @@ const axiosConfig = {
     'Sec-Fetch-Site': 'none',
     'Sec-Fetch-User': '?1',
     'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.28; +https://www.travellings.cn/docs/qa)',
+    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.29; +https://www.travellings.cn/docs/qa)',
   },
 };
 
@@ -76,7 +76,7 @@ async function crawlAndCheck() {
           return;
         }
         console.log(data);
-        console.log(`\nTravellings Bot <v 1.28> // Cpoyright (C) 2020-2023 Travellings-link Project. \n`);
+        console.log(`\nTravellings Bot <v 1.29> // Cpoyright (C) 2020-2023 Travellings-link Project. \n`);
         resolve();
       });
     });
@@ -148,7 +148,7 @@ async function crawlAndCheck() {
     const seconds = duration.seconds();
 
     // 输出统计信息
-    const logEntry1 = `\n>> 共 ${rows.length} 项 RUN: ${runCount} LOST: ${lostCount} ERROR: ${errorCount} TIMEOUT: ${timeoutCount} \n>> 检测耗时 ${hours} 小时 ${minutes} 分钟 ${seconds} 秒`
+    const logEntry1 = `\n>> 共 ${rows.length} 项 RUN: ${runCount} LOST: ${lostCount} ERROR: ${errorCount} TIMEOUT: ${timeoutCount} \n>> 检测耗时 ${hours} 小时 ${minutes} 分钟 ${seconds} 秒\n`
     console.log(logEntry1);
     Botlogstream.write(`${logEntry1}\n`);
 
