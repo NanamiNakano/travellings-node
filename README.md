@@ -16,13 +16,12 @@ Windows / Linux
 ## 本地部署
 将仓库克隆到本地后，使用 `npm install` 安装基本依赖  
 API 和 Bot 是两个东西，单独执行用 `node api.js` 和 `bot.js`  
+数据库信息存放在 `.env` 文件中  
 也可以用 systemctl 挂载为系统服务（仓库中已给出示例，请根据自己的文件目录进行改动）  
 
 ## 使用方法
 ### API
-API 默认启动在 3000 端口，如有需要可以修改 `api.js` 中的 `const port = 3000;`  
-数据库信息请自行修改（别问我为什么不用单独的配置文件，会用我早用了） 
-
+API 默认启动在 3000 端口，要改在 `.env` 里改
 API 有以下几个路径可以访问  
 ```
 /random  随机一个数据库中 status 为 RUN 的站点
@@ -44,18 +43,14 @@ fetch 得到的格式与 random 有所不同，您可以根据该 API 的请求�
 默认不占用端口，请修改 `bot.js` 中的数据库信息  
 开机即可使用，默认 5 小时开启一次新的检测循环，默认超时时间为 30s，如有需要请修改 `bot.js` 中的以下部分代码  
 
-以下为检测超时部分，默认 User-Agent 使用 `Mozilla/5.0 (compatible; Travellings Bot/1.25; +https://www.travellings.cn/docs/qa)`，如果有需要也可以在此修改
+超时时间  
 ```
 // Axios
 const axiosConfig = {
   timeout: 30000, // 超时时间默认 30 秒，有需要自己改
-  headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.25; +https://www.travellings.cn/docs/qa)',
-  },
-};
 ```
 
-以下为循环间隔时间
+循环间隔时间  
 ```
 // 每隔 5 小时一次循环，有需要自己改
 setInterval(crawlAndCheck, 5 * 60 * 60 * 1000);
@@ -64,9 +59,6 @@ setInterval(crawlAndCheck, 5 * 60 * 60 * 1000);
 ## 展望未来
 API 关键操作调用 Log  
 独立管理系统 申请 + 审核，前后端分离  
-Bot 检测完毕统计  
-Bot 回滚宽松检测  
-Bot 支持http2并发送所有浏览器标头来尽可能避免拦截  
 重写 API 响应格式  
 Bot 支持 socks5 和 http 代理  
 
