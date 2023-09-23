@@ -6,8 +6,8 @@
 //                                       |___/                       
 //
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Version 1.26 / 2023/9/18 23:35 Lastest
-// "阿巴阿巴阿巴"
+// Version 1.28 / 2023/9/23 16:22 Lastest
+// `阿巴阿巴阿巴`
 
 const fs = require('fs');
 const path = require('path');
@@ -18,18 +18,6 @@ const dotenv = require('dotenv');
 
 // ASCII艺术字
 var figlet = require('figlet');
-
-figlet('Travellings Bot', function (err, data) {
-    if (err) {
-        console.log('Something went wrong...');
-        console.dir(err);
-        return;
-    }
-    console.log(data)
-    console.log("");
-    console.log("Travellings Bot <v 1.26> // Cpoyright (C) 2020-2023 Travellings-link Project.");
-    console.log("");
-});
 
 // 创建 Botlogs（如果没有）
 const BotlogsFolderPath = path.join(__dirname, 'Botlogs');
@@ -55,15 +43,15 @@ const axiosConfig = {
     'Accept-Encoding': 'gzip, deflate, br',
     'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
     'Cache-Control': 'max-age=0',
-    'Sec-Ch-Ua': '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"',
+    'Sec-Ch-Ua': '`Chromium`;v=`116`, `Not)A;Brand`;v=`24`, `Google Chrome`;v=`116`',
     'Sec-Ch-Ua-Mobile': '?0',
-    'Sec-Ch-Ua-Platform': '"Windows"',
+    'Sec-Ch-Ua-Platform': '`Windows`',
     'Sec-Fetch-Dest': 'document',
     'Sec-Fetch-Mode': 'navigate',
     'Sec-Fetch-Site': 'none',
     'Sec-Fetch-User': '?1',
     'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.26; +https://www.travellings.cn/docs/qa)',
+    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.28; +https://www.travellings.cn/docs/qa)',
   },
 };
 
@@ -71,7 +59,31 @@ async function crawlAndCheck() {
   const connection = await mysql.createConnection(dbConfig);
 
   try {
-    console.log(">> 开始检测站点");
+    // 时间
+    const currentTimeForFileName = moment().format('YYYY-MM-DD HH_mm_ss');
+
+    // 写 log
+    const logFileName = `${currentTimeForFileName}.log`;
+    const logFilePath = path.join(BotlogsFolderPath, logFileName);
+    const Botlogstream = fs.createWriteStream(logFilePath, { flags: 'a' });
+
+    // ASCII 艺术字
+    await new Promise((resolve) => {
+      figlet('Travellings Bot', function (err, data) {
+        if (err) {
+          console.log('Something went wrong...');
+          console.dir(err);
+          return;
+        }
+        console.log(data);
+        console.log(`\nTravellings Bot <v 1.28> // Cpoyright (C) 2020-2023 Travellings-link Project. \n`);
+        resolve();
+      });
+    });
+
+    const logEntry = `>> 开始检测 \n`
+    console.log(logEntry);
+    Botlogstream.write(`${logEntry}\n`);
 
     // 查表
     const [rows] = await connection.query('SELECT * FROM webs');
@@ -82,29 +94,21 @@ async function crawlAndCheck() {
 
     const startTime = moment(); // 记录开始时间
 
-    // 时间
-    const currentTimeForFileName = moment().format('YYYY-MM-DD HH_mm_ss');
-
-    // 写 log
-    const logFileName = `${currentTimeForFileName}.log`;
-    const logFilePath = path.join(BotlogsFolderPath, logFileName);
-    const Botlogstream = fs.createWriteStream(logFilePath, { flags: 'a' });
-
     for (const row of rows) {
       let statusReason = ''; // 存储判定原因
       try {
         const response = await axios.get(row.link, axiosConfig);
-
-        // 检查相应 html 体
-        if (response.data.includes('travellings.cn/go')) {
-          // 有就有
+        // 检查字段
+        const linkPattern = /https:\/\/[^/]+\.travellings\.[^/]+/g;
+        if (linkPattern.test(response.data)) {
+          // 有
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['RUN', row.indexs]);
-          statusReason = '>> RUN';
+          statusReason = 'RUN';
           runCount++;
         } else {
-          // 没有就没有
+          // 没有
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['LOST', row.indexs]);
-          statusReason = '>> LOST';
+          statusReason = 'LOST';
           lostCount++;
         }
       } catch (error) {
@@ -112,17 +116,17 @@ async function crawlAndCheck() {
         if (error.response) {
           // 4xx or 5xx
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', [error.response.status, row.indexs]);
-          statusReason = `>> ${error.response.status}`;
+          statusReason = `${error.response.status}`;
           errorCount++;
         } else if (error.code === 'ECONNABORTED') {
           // 你超时了
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['TIMEOUT', row.indexs]);
-          statusReason = '>> TIMEOUT';
+          statusReason = 'TIMEOUT';
           timeoutCount++;
         } else {
           // 其他疑难杂症归为 ERROR
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['ERROR', row.indexs]);
-          statusReason = '>> ERROR';
+          statusReason = 'ERROR';
           errorCount++;
         }
       }
@@ -131,9 +135,9 @@ async function crawlAndCheck() {
       const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
       // log
-      const logEntry = `[${currentTime}] 站点 ${row.link} 检测完成 ${statusReason}`;
-      console.log(logEntry);
-      Botlogstream.write(`${logEntry}\n`);
+      const logEntry0 = `[${currentTime}] 站点 ${row.link} 检测完成 >> ${statusReason}`;
+      console.log(logEntry0);
+      Botlogstream.write(`${logEntry0}\n`);
     }
 
     // 计算耗时
@@ -144,8 +148,9 @@ async function crawlAndCheck() {
     const seconds = duration.seconds();
 
     // 输出统计信息
-    console.log(`共 ${rows.length} 项，RUN: ${runCount}，LOST: ${lostCount}，ERROR: ${errorCount}，TIMEOUT: ${timeoutCount}`);
-    console.log(`本次检测耗时 ${hours} 小时，${minutes} 分钟，${seconds} 秒`);
+    const logEntry1 = `\n>> 共 ${rows.length} 项 RUN: ${runCount} LOST: ${lostCount} ERROR: ${errorCount} TIMEOUT: ${timeoutCount} \n>> 检测耗时 ${hours} 小时 ${minutes} 分钟 ${seconds} 秒`
+    console.log(logEntry1);
+    Botlogstream.write(`${logEntry1}\n`);
 
     // 关了log
     Botlogstream.end();
