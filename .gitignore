@@ -133,3 +133,4 @@ dist
 .vs
 .tmp
 Botlogs
+node_modules
