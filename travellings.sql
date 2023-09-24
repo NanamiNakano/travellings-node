@@ -33,7 +33,7 @@ CREATE TABLE `sessions` (
   `passwd` text NOT NULL,
   `token` text NOT NULL,
   `last` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- 转存表中的数据 `sessions`
@@ -54,7 +54,7 @@ CREATE TABLE `webs` (
   `name` text,
   `link` text,
   `tag` longtext
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- 转存表中的数据 `webs`
