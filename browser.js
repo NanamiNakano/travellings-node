@@ -6,18 +6,20 @@
 //                                       |___/                       
 //
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
-// Headless Browser / Version 1.12 / 2023/9/24 12:29 Lastest
-// "你没有舍不得，我也不好意思难过。"
+// Headless Browser / Version 1.25 / 2023/9/24 18:11 Lastest
+// "永远不要低估你的潜能，永远不要放弃你的梦想。"
 
 const fs = require('fs');
 const path = require('path');
 const mysql = require('mysql2/promise');
 const moment = require('moment');
 const dotenv = require('dotenv');
-const { Builder, By, Key, until } = require('selenium-webdriver');
+const { Builder } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
+const chalk = require('chalk');
+const UA = "Mozilla/5.0 (compatible; Travellings Browser Bot/1.25; +https://www.travellings.cn/docs/qa)"
 
-const tempDir = './temp';
+const tempDir = './tmp';
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir);
 }
@@ -42,26 +44,6 @@ const dbConfig = {
   database: process.env.DB_DATABASE,
 };
 
-// Axios
-// const axiosConfig = {
-//  timeout: 30000, // 超时时间默认 30 秒，有需要自己改
-//  headers: {
-//    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-//    'Accept-Encoding': 'gzip, deflate, br',
-//    'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-//    'Cache-Control': 'max-age=0',
-//    'Sec-Ch-Ua': '`Chromium`;v=`116`, `Not)A;Brand`;v=`24`, `Google Chrome`;v=`116`',
-//    'Sec-Ch-Ua-Mobile': '?0',
-//    'Sec-Ch-Ua-Platform': '`Windows`',
-//    'Sec-Fetch-Dest': 'document',
-//    'Sec-Fetch-Mode': 'navigate',
-//    'Sec-Fetch-Site': 'none',
-//    'Sec-Fetch-User': '?1',
-//    'Upgrade-Insecure-Requests': '1',
-//    'User-Agent': 'Mozilla/5.0 (compatible; Travellings Bot/1.30; +https://www.travellings.cn/docs/qa)',
-//  },
-//};
-
 async function crawlAndCheck() {
   const connection = await mysql.createConnection(dbConfig);
 
@@ -83,7 +65,7 @@ async function crawlAndCheck() {
           return;
         }
         console.log(data);
-        console.log(`\nTravellings Bot <Headless Browser / v 1.12> // Cpoyright (C) 2020-2023 Travellings-link Project. \n`);
+        console.log(`\nTravellings Bot <Headless Browser / v 1.25> // Cpoyright (C) 2020-2023 Travellings-link Project. \n`);
         resolve();
       });
     });
@@ -110,6 +92,9 @@ async function crawlAndCheck() {
     options.addArguments('--disable-features=StylesWithCss=false'); // 禁用CSS加载
     options.addArguments('--blink-settings=imagesEnabled=false'); // 禁用图片加载
     options.addArguments(`--user-data-dir=${path.resolve(tempDir)}`);
+    options.addArguments(`--user-agent=${UA}`);
+    options.excludeSwitches(['enable-logging']);
+    options.addArguments('--log-level=OFF');
 
     const driver = new Builder()
       .forBrowser('chrome')
@@ -126,6 +111,8 @@ async function crawlAndCheck() {
             .setChromeOptions(options)
             .build();
       
+          // 定义超时时间
+          await driver.manage().setTimeouts({ implicit: process.env.BROWSER_TIMEOUT * 1000 });
           await driver.get(row.link);
       
           // 加载页面
@@ -142,9 +129,13 @@ async function crawlAndCheck() {
             lostCount++;
           }
         } catch (error) {
-          // 不正常情况
-          if (error.message.startsWith('4') || error.message.startsWith('5')) {
-            // 4xx 或 5xx 状态码
+          // 超时
+          if (error.name === 'TimeoutError') {
+            await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['TIMEOUT', row.indexs]);
+            statusReason = 'TIMEOUT';
+            timeoutCount++;
+          } else if (error.message.startsWith('4') || error.message.startsWith('5')) {
+            // 4xx or 5xx
             await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', [error.message, row.indexs]);
             statusReason = error.message;
           } else {
@@ -158,16 +149,15 @@ async function crawlAndCheck() {
             await driver.quit();
           }
         }
-    
 
-      // 开机时间，用于日志命名
-      const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
-
-      // log
-      const logEntry0 = `[${currentTime}] 站点 ${row.link} 检测完成 >> ${statusReason}`;
-      console.log(logEntry0);
-      Botlogstream.write(`${logEntry0}\n`);
-    }
+        // 开机时间，用于日志命名
+        const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
+      
+        // log
+        const logEntry0 = `[${currentTime}] 站点 ${row.link} 检测完成 >> ${statusReason}`;
+        console.log(chalk.blue(logEntry0));
+        Botlogstream.write(`${logEntry0}\n`);
+      }
 
     // 计算耗时
     const endTime = moment();
