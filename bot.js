@@ -99,8 +99,7 @@ async function crawlAndCheck() {
       try {
         const response = await axios.get(row.link, axiosConfig);
         // 检查字段
-        const linkPattern = /https:\/\/[^/]+\.travellings\.[^/]+/g;
-        if (linkPattern.test(response.data)) {
+        if (response.data.includes('travellings')) {
           // 有
           await connection.query('UPDATE webs SET status = ? WHERE indexs = ?', ['RUN', row.indexs]);
           statusReason = 'RUN';
