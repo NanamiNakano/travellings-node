@@ -7,7 +7,7 @@
 //
 // By @BLxcwg666 <huixcwg@gmail.com / TG @xcnya>
 // WTF the code is @KawaiiSh1zuku
-// Headless Browser / Version 1.26 / 2023/9/24 19:27 Lastest
+// Headless Browser / Version 1.27 / 2023/9/24 19:27 Lastest
 // "永远不要低估你的潜能，永远不要放弃你的梦想。"
 
 const fs = require('fs');
@@ -19,8 +19,7 @@ const {
     Builder
 } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
-const chalk = require('chalk');
-const UA = "Mozilla/5.0 (compatible; Travellings Browser Bot/1.25; +https://www.travellings.cn/docs/qa)"
+const UA = "Mozilla/5.0 (compatible; Travellings Browser Bot/1.27; +https://www.travellings.cn/docs/qa)"
 const tempDir = './tmp';
 if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir);
@@ -70,7 +69,7 @@ async function crawlAndCheck() {
                     return;
                 }
                 console.log(data);
-                console.log(`\nTravellings Bot <Headless Browser / v 1.25> // Cpoyright (C) 2020-2023 Travellings-link Project. \n`);
+                console.log(`\nTravellings Bot <Headless Browser / v 1.27> // Cpoyright (C) 2020-2023 Travellings-link Project. \n`);
                 resolve();
             });
         });
@@ -153,7 +152,7 @@ async function crawlAndCheck() {
 
             // log
             const logEntry0 = `[${currentTime}] 站点 ${row.link} 检测完成 >> ${statusReason}`;
-            console.log(chalk.blue(logEntry0));
+            console.log(logEntry0);
             Botlogstream.write(`${logEntry0}\n`);
         }
 
