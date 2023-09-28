@@ -134,3 +134,4 @@ dist
 .tmp
 Botlogs
 node_modules
+.env
